@@ -1,0 +1,102 @@
+//
+//  LocationCore.swift
+//  LocationCore
+//
+//  Created by Gleb Karpushkin on 15/09/2016.
+//  Copyright © 2016 SurpriseMe. All rights reserved.
+//
+
+import Foundation
+import CoreLocation
+
+public protocol LocationProtocol {
+    
+    var manager: CLLocationManager { get }
+    var desiredAccuracy: CLLocationAccuracy { get set }
+    var distanceFilter: CLLocationDistance { get set }
+    var pausesLocationUpdates: Bool { get set }
+    func startUpdating()
+    func stopUpdating()
+    func monitoreNewRegion(region: CLCircularRegion)
+    func stopMonitoreRegion(region: CLCircularRegion)
+    init()
+}
+
+fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
+    
+    deinit {
+        print("Location Core Deinitialized")
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        NSLog("\(error)")
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        NSLog("\(error)")
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        
+    }
+    
+    internal func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedAlways:
+            break
+        case .authorizedWhenInUse:
+            break
+        case .denied :
+            break
+        case .notDetermined:
+            break
+        case .restricted:
+            break
+        }
+    }
+    
+}
+
+struct LocationCore: LocationProtocol {
+    
+    public var desiredAccuracy: CLLocationAccuracy
+    public var distanceFilter: CLLocationDistance
+    public var pausesLocationUpdates: Bool
+    
+    public static var location: LocationProtocol = LocationCore()
+    
+    public var manager = CLLocationManager()
+    fileprivate var managerDelegate = LocationManagerDelegate()
+    
+    init() {
+        self.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        self.distanceFilter = kCLDistanceFilterNone
+        self.pausesLocationUpdates = false
+        manager.delegate = managerDelegate
+        manager.requestAlwaysAuthorization()
+    }
+    
+    public func startUpdating() {
+        self.manager.startUpdatingLocation()
+    }
+    
+    public func stopUpdating() {
+        self.manager.stopUpdatingLocation()
+    }
+    
+    public func monitoreNewRegion(region: CLCircularRegion) {
+        self.manager.startMonitoring(for: region)
+    }
+    
+    public func stopMonitoreRegion(region: CLCircularRegion) {
+        self.manager.startMonitoring(for: region)
+    }
+    
+}
