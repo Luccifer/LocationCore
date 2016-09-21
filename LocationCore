@@ -91,11 +91,11 @@ struct LocationCore: LocationProtocol {
         self.manager.stopUpdatingLocation()
     }
     
-    public func monitoreNewRegion(region: CLCircularRegion) {
+    public func monitoreNew(region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
     
-    public func stopMonitoreRegion(region: CLCircularRegion) {
+    public func stopMonitoringFor(region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
     
