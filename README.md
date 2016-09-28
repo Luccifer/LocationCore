@@ -4,4 +4,4 @@
 ![](https://img.shields.io/badge/platform-ios-gray.svg)
 
 
-Working singleton for many projects with maximized power of GeoLocation
+Working singleton for many projects with maximised power of GeoLocation
