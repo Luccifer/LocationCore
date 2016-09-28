@@ -1,9 +1,9 @@
 //
 //  LocationCore.swift
-//  LocationCore
+//  SurpriseMe
 //
 //  Created by Gleb Karpushkin on 15/09/2016.
-//  Copyright © 2016 Eyerise. All rights reserved.
+//  Copyright © 2016 SurpriseMe. All rights reserved.
 //
 
 import Foundation
@@ -17,8 +17,8 @@ public protocol LocationProtocol {
     var pausesLocationUpdates: Bool { get set }
     func startUpdating()
     func stopUpdating()
-    func monitoreNewRegion(region: CLCircularRegion)
-    func stopMonitoreRegion(region: CLCircularRegion)
+    func monitoreNewRegion(_ region: CLCircularRegion)
+    func stopMonitoreRegion(_ region: CLCircularRegion)
     init()
 }
 
@@ -64,13 +64,13 @@ fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
     
 }
 
-struct LocationCore: LocationProtocol {
+struct Location: LocationProtocol {
     
     public var desiredAccuracy: CLLocationAccuracy
     public var distanceFilter: CLLocationDistance
     public var pausesLocationUpdates: Bool
     
-    public static var location: LocationProtocol = LocationCore()
+    public static var core: LocationProtocol = Location()
     
     public var manager = CLLocationManager()
     fileprivate var managerDelegate = LocationManagerDelegate()
@@ -91,11 +91,11 @@ struct LocationCore: LocationProtocol {
         self.manager.stopUpdatingLocation()
     }
     
-    public func monitoreNew(region: CLCircularRegion) {
+    public func monitoreNewRegion(_ region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
     
-    public func stopMonitoringFor(region: CLCircularRegion) {
+    public func stopMonitoreRegion(_ region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
     
