@@ -1,2 +1,6 @@
 # LocationCore
-working singleton for many projects with max power of GPS module
+
+![](https://img.shields.io/badge/swift-3.0-green.svg)
+
+
+Working singleton for many projects with maximized power of GeoLocation
