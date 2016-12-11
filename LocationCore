@@ -43,13 +43,12 @@ fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
     }
     
     internal func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        UserNotifications.core.addNotificationFromGPS(eventID: region.identifier)
     }
     
     internal func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         switch  state {
         case .inside:
-            UserNotifications.core.addNotificationFromGPS(eventID: region.identifier)
+            break
         case .outside:
             break
         default:
