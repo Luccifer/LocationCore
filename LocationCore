@@ -18,8 +18,8 @@ public protocol LocationProtocol {
     var monitoringAlavialbe: Bool {get set}
     func startUpdating()
     func stopUpdating()
-    func monitoreNewRegion(_ region: CLCircularRegion)
-    func stopMonitoreRegion(_ region: CLCircularRegion)
+    func monitorNewRegion(_ region: CLCircularRegion)
+    func stopMonitorRegion(_ region: CLCircularRegion)
     func getLocationAccuracy() -> String
     init()
 }
@@ -105,12 +105,12 @@ struct Location: LocationProtocol {
         self.manager.stopUpdatingLocation()
     }
     
-    public func monitoreNewRegion(_ region: CLCircularRegion) {
+    public func monitorNewRegion(_ region: CLCircularRegion) {
         region.notifyOnEntry = true
         self.manager.startMonitoring(for: region)
     }
     
-    public func stopMonitoreRegion(_ region: CLCircularRegion) {
+    public func stopMonitorRegion(_ region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
     
