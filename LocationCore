@@ -15,10 +15,12 @@ public protocol LocationProtocol {
     var desiredAccuracy: CLLocationAccuracy { get set }
     var distanceFilter: CLLocationDistance { get set }
     var pausesLocationUpdates: Bool { get set }
+    var monitoringAlavialbe: Bool {get set}
     func startUpdating()
     func stopUpdating()
     func monitoreNewRegion(_ region: CLCircularRegion)
     func stopMonitoreRegion(_ region: CLCircularRegion)
+    func getLocationAccuracy() -> String
     init()
 }
 
@@ -29,6 +31,7 @@ fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
     }
     
     internal func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
     }
     
     internal func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -40,10 +43,18 @@ fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
     }
     
     internal func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
-        
+        UserNotifications.core.addNotificationFromGPS(eventID: region.identifier)
     }
     
     internal func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        switch  state {
+        case .inside:
+            UserNotifications.core.addNotificationFromGPS(eventID: region.identifier)
+        case .outside:
+            break
+        default:
+            break
+        }
         
     }
     
@@ -62,6 +73,7 @@ fileprivate class LocationManagerDelegate: NSObject, CLLocationManagerDelegate {
         }
     }
     
+    
 }
 
 struct Location: LocationProtocol {
@@ -69,6 +81,7 @@ struct Location: LocationProtocol {
     public var desiredAccuracy: CLLocationAccuracy
     public var distanceFilter: CLLocationDistance
     public var pausesLocationUpdates: Bool
+    public var monitoringAlavialbe: Bool
     
     public static var core: LocationProtocol = Location()
     
@@ -79,7 +92,9 @@ struct Location: LocationProtocol {
         self.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         self.distanceFilter = kCLDistanceFilterNone
         self.pausesLocationUpdates = false
+        self.monitoringAlavialbe =  CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self)
         manager.delegate = managerDelegate
+        manager.allowsBackgroundLocationUpdates = true
         manager.requestAlwaysAuthorization()
     }
     
@@ -92,11 +107,37 @@ struct Location: LocationProtocol {
     }
     
     public func monitoreNewRegion(_ region: CLCircularRegion) {
+        region.notifyOnEntry = true
         self.manager.startMonitoring(for: region)
     }
     
     public func stopMonitoreRegion(_ region: CLCircularRegion) {
         self.manager.startMonitoring(for: region)
     }
+    
+    public func getLocationAccuracy() -> String {
+        
+        if (self.manager.location!.horizontalAccuracy < 0)
+        {
+            print("No Signal")
+            return "No Signal".localized
+        }
+        else if (self.manager.location!.horizontalAccuracy > 163)
+        {
+            print("Poor Signal")
+            return "Poor".localized
+        }
+        else if (self.manager.location!.horizontalAccuracy > 48)
+        {
+            print("Average Signal")
+            return "Average".localized
+        }
+        else
+        {
+            print("Full Signal")
+            return "Full".localized
+        }
+    }
+
     
 }
